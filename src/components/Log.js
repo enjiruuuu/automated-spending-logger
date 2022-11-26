@@ -8,17 +8,26 @@ export default class Log extends React.Component {
             convertedAmount: 0.00,
             amountSpent: 0.00,
             conversionTo1SGD: 0.00,
+            description: '',
+            category: ''
         }
     }
 
     componentDidMount() {
         this.setState({rate: this.props.rate})
+        this.setState({category: this.props.category})
+
         this.calculateAmtIn1SGD().then(() => {
             if (this.props.amountSpent != null) {
                 this.setState({amountSpent: this.props.amountSpent})
 
-            //do the conversion according to latest rate that's passed in from parent component
-            this.calculateAmountSpentBasedOnRate(this.props.amountSpent)
+                if (this.props.convertedAmount != null) {
+                    this.setState({convertedAmount: this.props.convertedAmount})
+                }
+
+                if (this.props.description != null) {
+                    this.setState({description: this.props.description})
+                }
             }
         })
     }
@@ -42,11 +51,22 @@ export default class Log extends React.Component {
         this.setState({amountSpent: target.value})
     }
 
+    updateDescription(target) {
+        this.setState({description: target.value})
+    }
+
+    updateCategory(target){
+        this.setState({category: target.value})
+    }
+
     submitUpdatedValueToParent() {
         const key = this.props.keyVal;
         const val = this.state.amountSpent;
+        const convertedAmount = this.state.convertedAmount;
+        const description = this.state.description;
+        const category = this.state.category;
 
-        this.props.parentCallback(key, val)
+        this.props.parentCallback(key, val, convertedAmount, description, category)
     }
 
     submitDeleteRequestToParent() {
@@ -57,6 +77,14 @@ export default class Log extends React.Component {
         return (
             <tr>
                 <td>{this.props.date}</td>
+                <td>
+                    <select defaultValue={this.props.category} onChange={(e) => {this.updateCategory(e.target)}}>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Food">Food</option>
+                        <option value="Transport">Transport</option>
+                    </select>
+                </td>
+                <td><input defaultValue={this.props.description} onChange={(e) => {this.updateDescription(e.target)}}></input></td>
                 <td><input defaultValue={this.props.amountSpent} onChange={(e) => {this.convertAmtSpentToSGD(e.target)}}></input></td>
                 <td><p>{parseFloat(this.state.convertedAmount).toFixed(2)}</p></td>
                 <td><button onClick={() => {this.submitUpdatedValueToParent()}}>Update</button></td>

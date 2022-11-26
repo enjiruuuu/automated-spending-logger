@@ -1,5 +1,6 @@
 import React from "react";
 import Log from "../components/Log";
+import Api from "../helpers/api";
 
 export default class Main extends React.Component {
     constructor(props) {
@@ -8,8 +9,10 @@ export default class Main extends React.Component {
           rate: localStorage.getItem('rate') || 0,
           date: '',
           conversionTo1SGD: '',
-          allLogs: JSON.parse(localStorage.getItem('allLogs')) || []
+          allLogs: localStorage.getItem('allLogs') || []
         };
+
+        this.api = new Api();
 
         //we need to bind this to the updateLog function because the updateLog function is called in another function (render) where the scope of the 'this' keyword is local to the function only. however, we want 'this' to refer to the global component
         this.updateLog = this.updateLog.bind(this);
@@ -22,7 +25,7 @@ export default class Main extends React.Component {
         const mm = String(today.getMonth() + 1).padStart(2, '0');
         const yyyy = today.getFullYear();
 
-        today = mm + '/' + dd + '/' + yyyy;
+        today = dd + '/' + mm + '/' + yyyy;
         this.setState({date: today})
     }
 
@@ -50,7 +53,10 @@ export default class Main extends React.Component {
             key: Date.now(),
             date: this.state.date,
             amountSpent: null,
-            rate: this.state.rate
+            rate: this.state.rate,
+            convertedAmount: null,
+            description: null,
+            category: 'Shopping' // default value for category
         }
 
         let allLogs = this.state.allLogs;
@@ -61,7 +67,7 @@ export default class Main extends React.Component {
         });
     }
 
-    updateLog(key, value) {
+    updateLog(key, value, convertedAmount, description, category) {
         const logs = this.state.allLogs;
 
         //find index
@@ -76,6 +82,9 @@ export default class Main extends React.Component {
         const log = logs[index]
 
         log.amountSpent = value;
+        log.convertedAmount = convertedAmount;
+        log.description = description;
+        log.category = category;
         
         this.setState({allLogs: logs}, () => {
             localStorage.setItem('allLogs', JSON.stringify(logs))
@@ -101,38 +110,63 @@ export default class Main extends React.Component {
         })
     }
 
+    deleteAllLogs() {
+        this.setState({allLogs: []}, () => {
+            localStorage.setItem('allLogs', [])
+        })
+    }
+
+    sendDataToUpdateSheet() {
+        this.api.updateSheet(this.state.allLogs)
+            .then((data) => {
+                if(data.code === 200) {
+                    //clear all current logs
+                    this.deleteAllLogs();
+                }
+            })
+    }
+
     componentDidMount() {
         this.setDate()
+
+        if (this.state.allLogs.length > 0) {
+            this.setState({allLogs: JSON.parse(this.state.allLogs)})
+        }
     }
 
     render() {
         return (
             <div>
                 <fieldset>
-                    <label>Rate: </label>
-                    <input defaultValue={this.state.rate} id="rate"></input>
-                    <button onClick={() => {this.updateRate()}}>Update</button>
+                    <div>
+                        <label>Rate: </label>
+                        <input defaultValue={this.state.rate} id="rate"></input>
+                        <button onClick={() => {this.updateRate()}}>Update</button>
+                    </div>
                 </fieldset>
 
-                <p>The current rate is 1 SGD to {this.state.rate} JPY</p>
+                <p>The current rate is 1 SGD to {this.state.rate} Baht</p>
 
                 <table>
                     <thead>
                         <tr>
                             <th>Date</th>
-                            <th>Amount spent in JPY</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Amount spent in Baht</th>
                             <th>Amount converted to SGD</th>
                         </tr>
                     </thead>
 
                     <tbody>
                         {this.state.allLogs.map((data) => {            
-                            return (<Log key={data.key} keyVal={data.key} date={data.date} amountSpent={data.amountSpent} rate={data.rate} parentCallback= {this.updateLog} parentCallbackForDelete={this.deleteLog} />) 
+                            return (<Log key={data.key} keyVal={data.key} date={data.date} category={data.category} description={data.description} convertedAmount={data.convertedAmount} amountSpent={data.amountSpent} rate={data.rate} parentCallback= {this.updateLog} parentCallbackForDelete={this.deleteLog} />) 
                         })}
                     </tbody>
                 </table>
 
                 <button onClick={() => {this.addLog()}}>Add</button>
+                <button onClick={() => {this.sendDataToUpdateSheet()}}>Update Sheet</button>
             </div>
         );
     }
