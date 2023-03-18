@@ -6,11 +6,9 @@ export default class Main extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-        //   rate: localStorage.getItem('rate') || 0,
           rate: 0,
           date: '',
           conversionTo1SGD: '',
-        //   allLogs: localStorage.getItem('allLogs') || []
           allLogs: []
         };
 
@@ -114,7 +112,7 @@ export default class Main extends React.Component {
 
     deleteAllLogs() {
         this.setState({allLogs: []}, () => {
-            localStorage.setItem('allLogs', [])
+            localStorage.setItem('allLogs', JSON.stringify([]))
         })
     }
 
@@ -131,14 +129,20 @@ export default class Main extends React.Component {
     componentDidMount() {
         this.setDate()
 
-        if (this.state.allLogs.length > 0) {
-            this.setState({allLogs: JSON.parse(this.state.allLogs)})
-        }
-
         const rateInStorage = localStorage.getItem('rate')
         if (!!rateInStorage) {
             const parsedRate = parseInt(rateInStorage)
             this.setState({rate: parsedRate})
+        }
+
+        const allLogsInStorage = localStorage.getItem('allLogs')
+        if (allLogsInStorage == null) {
+            localStorage.setItem('allLogs', JSON.stringify(this.state.allLogs))
+        }
+
+        if (!!allLogsInStorage && allLogsInStorage.length > 0) {
+            const parsedLogs = JSON.parse(allLogsInStorage);
+            this.setState({allLogs: parsedLogs})
         }
     }
 
