@@ -8,7 +8,7 @@ export default class Api {
             sheetId: '1J-b1RBUcEGuH9RZ015cBhn0S8ZTRmlDWfOUnoATpB5U',
         }
 
-        return await axios.post(`https://automated-spending-logger-api.glitch.me/update`, request)
+        return await axios.post(`https://automated-spending-logger-api.onrender.com/update`, request)
             .then(res => {
                 return Promise.resolve(res.data);
             })
