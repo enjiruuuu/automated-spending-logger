@@ -2,10 +2,18 @@ import axios from 'axios';
 
 export default class Api {
     async updateSheet(logs) {
-        const request = this.formatRequest(logs)
-        return axios.post(`http://localhost:8080/update`, request)
+        console.log('updating')
+        const request = {
+            logs: this.formatRequest(logs),
+            sheetId: '1J-b1RBUcEGuH9RZ015cBhn0S8ZTRmlDWfOUnoATpB5U',
+        }
+
+        return await axios.post(`https://automated-spending-logger-api.glitch.me/update`, request)
             .then(res => {
                 return Promise.resolve(res.data);
+            })
+            .catch(err => {
+                console.log(err)
             })
     }
 

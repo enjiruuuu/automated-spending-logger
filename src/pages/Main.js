@@ -6,10 +6,12 @@ export default class Main extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          rate: localStorage.getItem('rate') || 0,
+        //   rate: localStorage.getItem('rate') || 0,
+          rate: 0,
           date: '',
           conversionTo1SGD: '',
-          allLogs: localStorage.getItem('allLogs') || []
+        //   allLogs: localStorage.getItem('allLogs') || []
+          allLogs: []
         };
 
         this.api = new Api();
@@ -132,6 +134,12 @@ export default class Main extends React.Component {
         if (this.state.allLogs.length > 0) {
             this.setState({allLogs: JSON.parse(this.state.allLogs)})
         }
+
+        const rateInStorage = localStorage.getItem('rate')
+        if (!!rateInStorage) {
+            const parsedRate = parseInt(rateInStorage)
+            this.setState({rate: parsedRate})
+        }
     }
 
     render() {
@@ -145,7 +153,7 @@ export default class Main extends React.Component {
                     </div>
                 </fieldset>
 
-                <p>The current rate is 1 SGD to {this.state.rate} Baht</p>
+                <p>The current rate is 1 SGD to {this.state.rate} JPY</p>
 
                 <table>
                     <thead>
@@ -153,7 +161,7 @@ export default class Main extends React.Component {
                             <th>Date</th>
                             <th>Category</th>
                             <th>Description</th>
-                            <th>Amount spent in Baht</th>
+                            <th>Amount spent in JPY</th>
                             <th>Amount converted to SGD</th>
                         </tr>
                     </thead>
