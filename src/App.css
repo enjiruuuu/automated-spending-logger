@@ -36,3 +36,34 @@
     transform: rotate(360deg);
   }
 }
+
+
+body {
+  padding: 30px 20px 0px 20px;
+}
+
+th {
+  text-align: left;
+  width: 60%;
+}
+
+table {
+  margin-bottom: 30px;
+}
+
+input + button {
+  margin-left: 10px;
+}
+
+table button {
+  margin-top: 10px;
+}
+
+button + button {
+  margin-left: 10px;
+}
+
+fieldset {
+  padding: 0px;
+  border: 0px;
+}

@@ -75,21 +75,44 @@ export default class Log extends React.Component {
 
     render() {
         return (
-            <tr>
-                <td>{this.props.date}</td>
-                <td>
-                    <select defaultValue={this.props.category} onChange={(e) => {this.updateCategory(e.target)}}>
-                        <option value="Shopping">Shopping</option>
-                        <option value="Food">Food</option>
-                        <option value="Transport">Transport</option>
-                    </select>
-                </td>
-                <td><input defaultValue={this.props.description} onChange={(e) => {this.updateDescription(e.target)}}></input></td>
-                <td><input defaultValue={this.props.amountSpent} onChange={(e) => {this.convertAmtSpentToSGD(e.target)}}></input></td>
-                <td><p>{parseFloat(this.state.convertedAmount).toFixed(2)}</p></td>
-                <td><button onClick={() => {this.submitUpdatedValueToParent()}}>Update</button></td>
-                <td><button onClick={() => {this.submitDeleteRequestToParent()}}>Delete</button></td>
-            </tr>
+            <table>
+                <tbody>
+                    <tr>
+                        <th>Date</th>
+                        <td>{this.props.date}</td>
+                    </tr>
+                    <tr>
+                        <th>Category</th>
+                        <td>
+                            <select defaultValue={this.props.category} onChange={(e) => {this.updateCategory(e.target)}}>
+                                <option value="Shopping">Shopping</option>
+                                <option value="Food">Food</option>
+                                <option value="Transport">Transport</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td><input defaultValue={this.props.description} onChange={(e) => {this.updateDescription(e.target)}}></input></td>
+                    </tr>
+                    <tr>
+                        <th>Amount spent in JPY</th>
+                        <td><input defaultValue={this.props.amountSpent} onChange={(e) => {this.convertAmtSpentToSGD(e.target)}}></input></td>
+                    </tr>
+                    <tr>
+                        <th>Amount converted to SGD</th>
+                        <td>
+                            <span>{parseFloat(this.state.convertedAmount).toFixed(2)}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button onClick={() => {this.submitUpdatedValueToParent()}}>Update</button>
+                            <button onClick={() => {this.submitDeleteRequestToParent()}}>Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         )
     }
 }

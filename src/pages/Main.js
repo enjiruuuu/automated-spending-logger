@@ -155,23 +155,9 @@ export default class Main extends React.Component {
 
                 <p>The current rate is 1 SGD to {this.state.rate} JPY</p>
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Category</th>
-                            <th>Description</th>
-                            <th>Amount spent in JPY</th>
-                            <th>Amount converted to SGD</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {this.state.allLogs.map((data) => {            
-                            return (<Log key={data.key} keyVal={data.key} date={data.date} category={data.category} description={data.description} convertedAmount={data.convertedAmount} amountSpent={data.amountSpent} rate={data.rate} parentCallback= {this.updateLog} parentCallbackForDelete={this.deleteLog} />) 
-                        })}
-                    </tbody>
-                </table>
+                {this.state.allLogs.map((data) => {            
+                    return (<Log key={data.key} keyVal={data.key} date={data.date} category={data.category} description={data.description} convertedAmount={data.convertedAmount} amountSpent={data.amountSpent} rate={data.rate} parentCallback= {this.updateLog} parentCallbackForDelete={this.deleteLog} />) 
+                })}
 
                 <button onClick={() => {this.addLog()}}>Add</button>
                 <button onClick={() => {this.sendDataToUpdateSheet()}}>Update Sheet</button>
